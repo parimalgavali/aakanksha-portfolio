@@ -1,38 +1,36 @@
 # Aakanksha Suryawanshi — Portfolio
 
-A responsive portfolio closely recreating the supplied Framer reference: black starfield, blue hero grid, lavender handwritten accents, floating skills, project gallery and experience cards, with Aakanksha’s real work and downloadable résumé. Built with semantic HTML, CSS and JavaScript; no runtime framework or package dependencies.
+A static UI/UX and visual design portfolio inspired by the supplied https://aritheux.framer.ai/ reference. Includes a floating glass navigation, animated white particles, dissolving name, cutout portrait with particle interactions, glossy buttons, project gallery, experience cards, scrolling skills, draggable toolkit, and chat-style FAQs. Call scheduling is intentionally omitted.
 
-## Run locally
+Repository: https://github.com/parimalgavali/aakanksha-portfolio
 
-Run `npm run dev` and open http://localhost:5173. Run `npm run check` to validate local links and assets, and `npm run build` to produce `dist/`.
+Live site: https://parimalgavali.github.io/aakanksha-portfolio/
 
-## Publish with GitHub Actions / Pages
+## Development
 
-1. This project is hosted in https://github.com/parimalgavali/aakanksha-portfolio. She can fork it to her account later, keeping the repository name for a project site or renaming it to `aakankshasuryawanshi16-svg.github.io` for her root site.
-2. Push updates to `main`. The local `origin` remote points to the repository above. In a fork, GitHub Actions must be enabled in the Actions tab before running the workflow.
-3. In the repository, select **Settings → Pages → Build and deployment → Source → GitHub Actions**.
-4. Run **Actions → Deploy portfolio to GitHub Pages → Run workflow**, or push to `main`.
-5. The workflow reports the published URL in its `github-pages` environment.
+- `npm run dev`: serve locally at http://localhost:5173.
+- `npm run check`: validate local assets and section links.
+- `npm run build`: package the static site into `dist/`.
 
-All local paths are relative, so root and repository-based Pages URLs are supported without a base-path change. If your default branch differs from `main`, update `.github/workflows/pages.yml`.
+No dependencies or installation required. Poppins, Instrument Serif and Mrs Saint Delafield load from Google Fonts with system fallbacks.
 
-## Content and editing
+## Deployment and forking
 
-- `index.html`: copy, project links, experience, résumé and contact details.
-- `style.css`: colors, typography, responsive layout and reduced-motion support.
-- `script.js`: reserved for progressive enhancements; navigation works without JavaScript.
-- `assets/projects/`: locally hosted artwork from Aakanksha’s Behance portfolio.
+Pushes to `main` deploy automatically through `.github/workflows/pages.yml`. In GitHub repository Settings → Pages, the source is GitHub Actions.
+
+Aakanksha can fork this repository, enable Actions on the fork, and select GitHub Actions as its Pages source. Run the deployment workflow manually for the first deployment. Keep the repository name for a project URL, or rename it to `aakankshasuryawanshi16-svg.github.io` for her root URL. All local paths are relative and support either option.
+
+## Editing
+
+- `index.html`: personal content, projects, experience, tools and FAQ.
+- `style.css`: design tokens, components, responsive layouts and CSS motion.
+- `script.js`: canvas effects, navigation, reveals, pointer lighting and constrained draggable tools.
+- `assets/projects/`: higher-resolution artwork from her Behance projects.
+- `assets/portrait.jpg`: original public Behance profile photo.
+- `assets/portrait-cutout.png`: background-removed portrait, derived from that photo with image generation. Replace with a high-resolution approved cutout when available.
 - `assets/Aakanksha-Suryawanshi-CV.pdf`: the supplied résumé.
+- `DESIGN.md`: reference observations, implemented effects and fidelity limits.
 
-Project summaries are based on her supplied CV and public portfolio. No performance metrics or testimonials have been invented. The CV and LinkedIn differ on the certification date, so certification dates are not displayed. Review the résumé and public email before publishing. Google Fonts supplies DM Sans and Manrope, with local system fallbacks.
+Tool icons support pointer dragging, arrow-key movement and Home to reset. Reduced-motion preference stops continuous effects. Canvas animation pauses when offscreen or when the browser tab is hidden.
 
-## Source material
-
-- https://www.behance.net/aakankshasuryawanshi
-- https://www.behance.net/aakankshasuryawanshi/moodboards (inspiration collections; not presented as authored work)
-- https://www.linkedin.com/in/aakanksha-gavali/
-- Supplied Aakanksha CV
-
-## Verification
-
-`npm run check`, `npm run build`, and `node --check script.js` pass. These validate packaging, JavaScript syntax, local assets and section anchors. A live browser layout review and the deployed GitHub Actions run have not been performed.
+Content is based on her CV, LinkedIn and Behance. The reference's testimonials and live client work are replaced with her design perspectives and verified project links; no endorsements or performance metrics have been invented.
