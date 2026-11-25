@@ -129,15 +129,15 @@
           const y = p.y + Math.sin(a) * (strand * 1.5 + ripple);
           if (!i) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = `rgba(${rgb},${.035 + strand * .009})`;
-        ctx.lineWidth = strand === 3 ? 1 : .55; ctx.stroke();
+        ctx.strokeStyle = `rgba(${rgb},${.11 + strand * .014})`;
+        ctx.lineWidth = strand === 3 ? 1.5 : .8; ctx.stroke();
       }
       // Small moving lights follow each filament rather than falling mechanically.
       for (let i = 0; i < 45; i++) {
         const a = i / 45 * Math.PI * 2 + t * (.6 + lane * .15) * (lane % 2 ? -1 : 1);
         const p = project(a, lane);
         const pulse = .3 + .7 * Math.pow(Math.sin(a * 2 + t + lane), 4);
-        const r = (i % 9 === 0 ? 2 : .7) * (1 + orbitBurst);
+        const r = (i % 9 === 0 ? 2.3 : 1) * (1 + orbitBurst);
         const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 5);
         glow.addColorStop(0, `rgba(244,226,255,${pulse})`);
         glow.addColorStop(.2, `rgba(${rgb},${pulse * .5})`); glow.addColorStop(1, `rgba(${rgb},0)`);
