@@ -1,6 +1,6 @@
 # Aakanksha Suryawanshi — Portfolio
 
-A responsive editorial portfolio with warm paper tones, cobalt typography, real Behance artwork, project filters, expandable briefs, and a downloadable résumé. Built with semantic HTML, CSS and JavaScript; no runtime framework or package dependencies.
+A responsive portfolio closely recreating the supplied Framer reference: black starfield, blue hero grid, lavender handwritten accents, floating skills, project gallery and experience cards, with Aakanksha’s real work and downloadable résumé. Built with semantic HTML, CSS and JavaScript; no runtime framework or package dependencies.
 
 ## Run locally
 
@@ -20,7 +20,7 @@ All local paths are relative, so root and repository-based Pages URLs are suppor
 
 - `index.html`: copy, project links, experience, résumé and contact details.
 - `style.css`: colors, typography, responsive layout and reduced-motion support.
-- `script.js`: project filters, clipboard action and current year.
+- `script.js`: reserved for progressive enhancements; navigation works without JavaScript.
 - `assets/projects/`: locally hosted artwork from Aakanksha’s Behance portfolio.
 - `assets/Aakanksha-Suryawanshi-CV.pdf`: the supplied résumé.
 
