@@ -30,3 +30,7 @@ Reference: https://aritheux.framer.ai/ — inspected in the shared browser on 20
 All authored project imagery and career details are Aakanksha's. The reference's testimonials are replaced with design perspectives rather than attributing its endorsements to her. Live client products are replaced with a work strip linking to her actual portfolio. Social links are verified supplied profiles and email. No call booking controls remain.
 
 Portrait source: her public Behance profile. The source file is 276px square; it is a temporary asset until a high-resolution portrait is provided. Background-removal processing preserves her identity and clothing. The cutout and particle rendering cannot match the reference portrait's geometry exactly. No claim of pixel-for-pixel or identical motion is made.
+
+## Portrait constellation experiment
+
+The hero now uses luminous orbital filaments, moving nodes, glass wireframe/prototype fragments, cursor parallax and pointer connections. The portrait remains above the canvas so her face stays clear. A keyboard-accessible Remix control switches among lavender, teal and rose palettes with an elastic expansion. This replaces the earlier portrait sweep; all sections outside the hero retain their existing design. Reduced-motion users get a static constellation with palette switching.

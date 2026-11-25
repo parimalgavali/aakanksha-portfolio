@@ -45,7 +45,11 @@
   const portraitContext = portraitCanvas.getContext('2d');
   const portrait = document.querySelector('#portrait');
   let width = 0, height = 0, nameWidth = 0, nameHeight = 0, portraitWidth = 0, portraitHeight = 0;
-  let stars = [], namePoints = [], portraitPoints = [], titleIndex = 0, nextTitle = 0;
+  let stars = [], namePoints = [], titleIndex = 0, nextTitle = 0;
+  let orbitX = 0, orbitY = 0, orbitMode = 0, orbitBurst = 0;
+  const stage = portraitCanvas.parentElement;
+  const remix = document.querySelector(".orbit-remix");
+  remix.addEventListener("click", () => { orbitMode = (orbitMode + 1) % 3; orbitBurst = 1; stage.dataset.orbit = orbitMode; if (reducedMotion.matches) draw(0); });
   let pointer = { x: -1000, y: -1000 }, heroVisible = true, frame = 0, lastTime = 0, elapsed = 0, initialized = false;
   const titles = ['Aakanksha', 'UI/UX Designer'];
   const configureCanvas = canvas => {
@@ -67,27 +71,13 @@
     for (let y = 0; y < sample.height; y += 2) for (let x = 0; x < sample.width; x += 2) if (data[(y * sample.width + x) * 4 + 3] > 90) namePoints.push({ tx: x, ty: y, x: Math.random() * nameWidth, y: Math.random() * nameHeight, seed: Math.random() * 10 });
     nameCanvas.parentElement.classList.add('ready');
   }
-  function samplePortrait() {
-    if (!portrait.naturalWidth || !portraitWidth) return;
-    const sample = document.createElement('canvas'); sample.width = Math.round(portraitWidth); sample.height = Math.round(portraitHeight);
-    const ctx = sample.getContext('2d', { willReadFrequently: true });
-    const stage = portraitCanvas.getBoundingClientRect(), rect = portrait.getBoundingClientRect();
-    const scale = Math.min(rect.width / portrait.naturalWidth, rect.height / portrait.naturalHeight);
-    const w = portrait.naturalWidth * scale, h = portrait.naturalHeight * scale;
-    ctx.drawImage(portrait, rect.left - stage.left + (rect.width - w) / 2, rect.top - stage.top + rect.height - h, w, h);
-    const data = ctx.getImageData(0, 0, sample.width, sample.height).data;
-    portraitPoints = [];
-    for (let y = 15; y < sample.height - 35; y += 5) for (let x = 0; x < sample.width; x += 5) {
-      const i = (y * sample.width + x) * 4;
-      if (data[i + 3] > 100 && data[i] + data[i + 1] + data[i + 2] > 90) portraitPoints.push({ x, y, r: data[i], g: data[i + 1], b: data[i + 2], seed: Math.random() * 10 });
-    }
-  }
   function resize() {
+    pointer = { x: -1000, y: -1000 };
     const snowSize = configureCanvas(snow); width = snowSize.width; height = snowSize.height;
     const nameSize = configureCanvas(nameCanvas); nameWidth = nameSize.width; nameHeight = nameSize.height;
     const portraitSize = configureCanvas(portraitCanvas); portraitWidth = portraitSize.width; portraitHeight = portraitSize.height;
     stars = Array.from({ length: Math.round(width / 6.5) }, () => ({ x: Math.random() * width, y: Math.random() * height, r: .35 + Math.random() * 1.05, speed: .12 + Math.random() * .25, phase: Math.random() * Math.PI * 2, alpha: .25 + Math.random() * .55 }));
-    sampleTitle(); samplePortrait();
+    sampleTitle();
     if (reducedMotion.matches) draw(0);
   }
   function draw(dt) {
@@ -103,17 +93,70 @@
       p.x += (tx - p.x) * .09 * dt; p.y += (ty - p.y) * .09 * dt;
       nameContext.fillStyle = `rgba(230,164,241,${.9 - dissolve * .6})`; nameContext.fillRect(p.x, p.y, 1.35, 1.35);
     }
-    portraitContext.clearRect(0, 0, portraitWidth, portraitHeight);
-    if (!reducedMotion.matches) for (const p of portraitPoints) {
-      const distance = Math.hypot(p.x - pointer.x, p.y - pointer.y);
-      const influence = Math.max(0, 1 - distance / 100);
-      const sweep = Math.max(0, 1 - Math.abs(p.y - (elapsed * .04 % (portraitHeight + 180) - 90)) / 35);
-      const force = influence * 25 + sweep * 6;
-      if (force < 1) continue;
-      portraitContext.fillStyle = `rgba(${p.r},${p.g},${p.b},${Math.min(.9, force / 25)})`;
-      portraitContext.fillRect(p.x + Math.sin(p.seed + elapsed * .002) * force, p.y + Math.cos(p.seed + elapsed * .002) * force, 1.5, 1.5);
+    drawConstellation(dt);
+  }
+  function drawConstellation(dt) {
+    const ctx = portraitContext, w = portraitWidth, h = portraitHeight;
+    ctx.clearRect(0, 0, w, h);
+    const active = pointer.x > -500;
+    const targetX = active ? (pointer.x / w - .5) : 0;
+    const targetY = active ? (pointer.y / h - .5) : 0;
+    orbitX += (targetX - orbitX) * .045 * dt;
+    orbitY += (targetY - orbitY) * .045 * dt;
+    orbitBurst *= Math.pow(.975, dt);
+    stage.style.setProperty('--orbit-x', `${orbitX * 22}px`);
+    stage.style.setProperty('--orbit-y', `${orbitY * 16}px`);
+    const palettes = [[191, 127, 255], [92, 220, 212], [248, 157, 181]];
+    const color = palettes[orbitMode], rgb = color.join(',');
+    const t = reducedMotion.matches ? .5 : elapsed * .00015;
+    const cx = w / 2 + orbitX * 25, cy = h * .47 + orbitY * 18;
+    const radius = Math.min(w * .405, 330) * (1 + orbitBurst * .08);
+    const project = (angle, lane) => {
+      const twist = -.45 + lane * .42 + Math.sin(t * .3 + lane) * .1 + orbitX * .18;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * (75 + lane * 16 + orbitY * 32);
+      return { x: cx + x * Math.cos(twist) - y * Math.sin(twist), y: cy + x * Math.sin(twist) + y * Math.cos(twist), z: Math.sin(angle) };
+    };
+    // Fine luminous filaments form a changing spatial drawing behind the portrait.
+    for (let lane = 0; lane < 3; lane++) {
+      for (let strand = 0; strand < 7; strand++) {
+        ctx.beginPath();
+        for (let i = 0; i <= 160; i++) {
+          const a = i / 160 * Math.PI * 2;
+          const p = project(a + t * (lane % 2 ? -.3 : .25), lane);
+          const ripple = Math.sin(a * 5 + t * 4 + strand * .3) * (2 + orbitBurst * 18);
+          const x = p.x + Math.cos(a) * (strand * 1.5 + ripple);
+          const y = p.y + Math.sin(a) * (strand * 1.5 + ripple);
+          if (!i) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = `rgba(${rgb},${.035 + strand * .009})`;
+        ctx.lineWidth = strand === 3 ? 1 : .55; ctx.stroke();
+      }
+      // Small moving lights follow each filament rather than falling mechanically.
+      for (let i = 0; i < 45; i++) {
+        const a = i / 45 * Math.PI * 2 + t * (.6 + lane * .15) * (lane % 2 ? -1 : 1);
+        const p = project(a, lane);
+        const pulse = .3 + .7 * Math.pow(Math.sin(a * 2 + t + lane), 4);
+        const r = (i % 9 === 0 ? 2 : .7) * (1 + orbitBurst);
+        const glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 5);
+        glow.addColorStop(0, `rgba(244,226,255,${pulse})`);
+        glow.addColorStop(.2, `rgba(${rgb},${pulse * .5})`); glow.addColorStop(1, `rgba(${rgb},0)`);
+        ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(p.x, p.y, r * 5, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    // An elastic constellation reaches toward the pointer at the outer edges.
+    if (active && !reducedMotion.matches) {
+      const gradient = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 100);
+      gradient.addColorStop(0, `rgba(${rgb},.08)`); gradient.addColorStop(1, `rgba(${rgb},0)`);
+      ctx.fillStyle = gradient; ctx.fillRect(pointer.x - 100, pointer.y - 100, 200, 200);
+      for (let i = 0; i < 15; i++) {
+        const p = project(i / 15 * Math.PI * 2 + t, i % 3);
+        const d = Math.hypot(p.x - pointer.x, p.y - pointer.y);
+        if (d < 160) { ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.quadraticCurveTo(p.x, pointer.y, pointer.x, pointer.y); ctx.strokeStyle = `rgba(${rgb},${(1 - d / 160) * .3})`; ctx.lineWidth = .6; ctx.stroke(); }
+      }
     }
   }
+
   function animate(time) {
     frame = 0;
     if (document.hidden || !heroVisible || reducedMotion.matches) { lastTime = 0; return; }
@@ -124,7 +167,7 @@
   function resume() { if (initialized && !frame && heroVisible && !document.hidden && !reducedMotion.matches) frame = requestAnimationFrame(animate); }
   portraitCanvas.parentElement.addEventListener('pointermove', e => { const r = portraitCanvas.getBoundingClientRect(); pointer = { x: e.clientX - r.left, y: e.clientY - r.top }; });
   portraitCanvas.parentElement.addEventListener('pointerleave', () => { pointer = { x: -1000, y: -1000 }; });
-  portrait.addEventListener('load', samplePortrait);
+
   new IntersectionObserver(entries => { heroVisible = entries[0].isIntersecting; resume(); }, { threshold: 0 }).observe(hero);
   document.addEventListener('visibilitychange', resume);
   reducedMotion.addEventListener('change', () => { resize(); resume(); });
